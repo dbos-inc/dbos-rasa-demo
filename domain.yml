@@ -9,6 +9,10 @@ slots:
     type: float
     mappings:
       - type: from_llm
+  final_confirmation:
+    type: bool
+    mappings:
+      - type: from_llm
 
 responses:
   utter_ask_recipient:
@@ -19,6 +23,12 @@ responses:
 
   utter_transfer_complete:
     - text: "All done. {amount} has been sent to {recipient}."
+
+  utter_ask_final_confirmation:
+    - text: "Please confirm: you want to transfer {amount} to {recipient}?"
+
+  utter_transfer_cancelled:
+    - text: "Your transfer has been cancelled."
 
   utter_free_chitchat_response:
     - text: "placeholder"
