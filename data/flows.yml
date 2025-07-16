@@ -5,7 +5,15 @@ flows:
       - collect: recipient
       - collect: amount
         description: the number of US dollars to send
+      - action: action_check_sufficient_funds
+        next:
+          - if: not slots.has_sufficient_funds
+            then:
+              - action: utter_insufficient_funds
+                next: END
+          - else: final_confirmation
       - collect: final_confirmation
+        id: final_confirmation
         next:
           - if: not slots.final_confirmation
             then:

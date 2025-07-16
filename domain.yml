@@ -1,5 +1,8 @@
 version: "3.1"
 
+actions:
+  - action_check_sufficient_funds
+
 slots:
   recipient:
     type: text
@@ -13,6 +16,10 @@ slots:
     type: bool
     mappings:
       - type: from_llm
+  has_sufficient_funds:
+    type: bool
+    mappings:
+      - type: controlled
 
 responses:
   utter_ask_recipient:
@@ -29,6 +36,9 @@ responses:
 
   utter_transfer_cancelled:
     - text: "Your transfer has been cancelled."
+  
+  utter_insufficient_funds:
+    - text: "You do not have enough funds to make this transaction."
 
   utter_free_chitchat_response:
     - text: "placeholder"
