@@ -23,3 +23,8 @@ flows:
       - action: action_transfer_funds
         id: transfer_successful
       - action: utter_transfer_complete
+  check_status:
+    description: Check the status of a transfer.
+    steps:
+      - collect: transfer_workflow_id
+      - action: action_check_transfer_status
