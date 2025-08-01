@@ -74,11 +74,15 @@ source .venv/bin/activate
 uv pip install dbos
 # Install rasa-pro later because it requires older versions of several libraries.
 uv pip install rasa-pro
-# Upgrade websockets to 14.1
-uv pip install websockets==14.1
+# Upgrade websockets to 13.1
+uv pip install websockets==13.1
 
 # Put your Rasa Pro license key here
 export RASA_PRO_LICENSE=<YOUR_LICENSE_KEY>
+
+# Configure speech services, using Deepgram for ASR and Cartesia for TTS
+export DEEPGRAM_API_KEY=<YOUR-DEEPGRAM-KEY>
+export CARTESIA_API_KEY=<YOUR-CARTESIA-KEY>
 ```
 
 

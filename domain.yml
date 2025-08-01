@@ -2,6 +2,7 @@ version: "3.1"
 
 actions:
   - action_check_sufficient_funds
+  - action_transfer_funds
 
 slots:
   recipient:
@@ -20,6 +21,10 @@ slots:
     type: bool
     mappings:
       - type: controlled
+  transfer_status:
+    type: text
+    mappings:
+      - type: controlled
 
 responses:
   utter_ask_recipient:
@@ -29,7 +34,7 @@ responses:
     - text: "How much money would you like to send?"
 
   utter_transfer_complete:
-    - text: "All done. {amount} has been sent to {recipient}."
+    - text: "All done. Transfer request {amount} to {recipient} status: {transfer_status}."
 
   utter_ask_final_confirmation:
     - text: "Please confirm: you want to transfer {amount} to {recipient}?"

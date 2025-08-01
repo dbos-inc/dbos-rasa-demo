@@ -28,9 +28,9 @@ def check_current_balance() -> int:
     return balance
 
 @DBOS.workflow()
-def transfer_money_workflow(amount: int) -> bool:
+def check_balance_workflow(amount: int) -> bool:
     """
-    A simple workflow to simulate a money transfer.
+    A simple workflow to check if the user has sufficient funds for a transfer.
     """
     # Check the current funds by invoking the step
     current_balance = check_current_balance()    
@@ -38,6 +38,40 @@ def transfer_money_workflow(amount: int) -> bool:
     if amount <= current_balance:
         return True
     return False
+
+@DBOS.step()
+def transfer_money(amount: int) -> str:
+    """
+    Transfer money from the user's account.
+    This is a placeholder for the actual transfer logic.
+    """
+    DBOS.logger.info(f"Transfer of {amount} units completed.")
+    return "Success"
+
+@DBOS.step()
+def send_confirmation_message(amount: int, success: str) -> bool:
+    """
+    Send a confirmation message to the user after the transfer.
+    This is a placeholder for the actual messaging logic.
+    """
+    DBOS.logger.info(f"Sending confirmation message for transfer of {amount} units, status: {success}.")
+    return True
+
+@DBOS.workflow()
+def transfer_funds_workflow(amount: int) -> bool:
+    """
+    A simple workflow to transfer funds.
+    This is a placeholder for the actual transfer logic.
+    """
+    # First step, transfer money
+    transfer_success = transfer_money(amount)
+
+    # Simulate a delay to mimic real-world processing time
+    DBOS.sleep(5)  # Simulate a delay for the transfer
+
+    # Then, send a confirmation message
+    status = send_confirmation_message(amount, transfer_success)
+    return status
 
 # Start the DBOS instance
 DBOS.launch()
@@ -54,5 +88,21 @@ class ActionCheckSufficientFunds(Action):
     ) -> List[Dict[Text, Any]]:
         transfer_amount = tracker.get_slot("amount")
         # Invoke a DBOS workflow by simply calling the function
-        has_sufficient_funds = transfer_money_workflow(transfer_amount)
+        has_sufficient_funds = check_balance_workflow(transfer_amount)
         return [SlotSet("has_sufficient_funds", has_sufficient_funds)]
+
+class ActionTransferFunds(Action):
+    def name(self) -> Text:
+        return "action_transfer_funds"
+
+    def run(
+        self,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> List[Dict[Text, Any]]:
+        transfer_amount = tracker.get_slot("amount")
+        # Invoke a DBOS workflow asynchronously
+        DBOS.start_workflow(transfer_funds_workflow, amount=transfer_amount)
+
+        return [SlotSet("transfer_status", "started")]

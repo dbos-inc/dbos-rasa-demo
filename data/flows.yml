@@ -20,5 +20,6 @@ flows:
               - action: utter_transfer_cancelled
                 next: END
           - else: transfer_successful
-      - action: utter_transfer_complete
+      - action: action_transfer_funds
         id: transfer_successful
+      - action: utter_transfer_complete
