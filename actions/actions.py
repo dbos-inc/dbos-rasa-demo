@@ -1,4 +1,5 @@
 import os
+from time import sleep
 from typing import Any, Dict, List, Text
 
 from rasa_sdk import Action, Tracker
@@ -50,6 +51,7 @@ def transfer_money(amount: int) -> str:
     Transfer money from the user's account.
     This is a placeholder for the actual transfer logic.
     """
+    sleep(5)  # Simulate a delay for the transfer process
     DBOS.logger.info(f"Transfer of {amount} units completed.")
     return "Success"
 
@@ -75,8 +77,8 @@ def transfer_funds_workflow(amount: int) -> bool:
     # First step, transfer money
     transfer_success = transfer_money(amount)
 
-    # Simulate a delay to mimic real-world processing time
-    DBOS.sleep(5)  # Simulate a delay for the transfer
+    # Wait a bit before sending the confirmation message
+    DBOS.sleep(15)
 
     # Then, send a confirmation message
     status = send_confirmation_message(amount, transfer_success)
