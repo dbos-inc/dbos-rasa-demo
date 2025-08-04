@@ -2,6 +2,8 @@ version: "3.1"
 
 actions:
   - action_check_sufficient_funds
+  - action_transfer_funds
+  - action_check_transfer_status
 
 slots:
   recipient:
@@ -20,6 +22,14 @@ slots:
     type: bool
     mappings:
       - type: controlled
+  transfer_status:
+    type: text
+    mappings:
+      - type: controlled
+  transfer_workflow_id:
+    type: text
+    mappings:
+      - type: from_llm
 
 responses:
   utter_ask_recipient:
@@ -29,7 +39,7 @@ responses:
     - text: "How much money would you like to send?"
 
   utter_transfer_complete:
-    - text: "All done. {amount} has been sent to {recipient}."
+    - text: "All done. Transfer request {amount} to {recipient} status: {transfer_status}. You'll receive a confirmation email when the transfer is complete."
 
   utter_ask_final_confirmation:
     - text: "Please confirm: you want to transfer {amount} to {recipient}?"
@@ -39,6 +49,9 @@ responses:
   
   utter_insufficient_funds:
     - text: "You do not have enough funds to make this transaction."
+
+  utter_ask_transfer_workflow_id:
+    - text: "Please provide the transfer workflow ID to check the status."
 
   utter_free_chitchat_response:
     - text: "placeholder"
