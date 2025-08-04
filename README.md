@@ -116,6 +116,11 @@ rasa train
 rasa inspect
 ```
 
+Alternatively, to run in the voice mode, simply start the Rasa server with:
+```
+rasa inspect --voice
+```
+
 Once it's successfully launched, you should be able to see this chat interface:
 
 ![Rasa inspect](imgs/rasa-intercept.png)
@@ -137,3 +142,4 @@ Restart your Rasa server and load the action again. Now you should see the histo
 
 You can click and check the steps of each workflow:
 ![dbos-workflow-graph](imgs/dbos-workflow-graph.png)
+
