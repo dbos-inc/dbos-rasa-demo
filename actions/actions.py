@@ -1,4 +1,6 @@
 import os
+from random import choices
+import string
 from time import sleep
 from typing import Any, Dict, List, Text
 
@@ -139,7 +141,9 @@ class ActionTransferFunds(Action):
         transfer_amount = tracker.get_slot("amount")
         recipient = tracker.get_slot("recipient")
         # Invoke a DBOS workflow asynchronously
-        with SetWorkflowID(recipient):
+        wfid = ''.join(choices(string.ascii_lowercase, k=4))
+
+        with SetWorkflowID(wfid):
             handle = DBOS.start_workflow(
                 transfer_funds_workflow, transfer_amount, recipient
             )

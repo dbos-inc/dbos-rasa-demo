@@ -39,7 +39,7 @@ responses:
     - text: "How much money would you like to send?"
 
   utter_transfer_complete:
-    - text: "All done. Transfer request {amount} to {recipient} status: {transfer_status}."
+    - text: "All done. Transfer request {amount} to {recipient} status: {transfer_status}. You'll receive a confirmation email when the transfer is complete."
 
   utter_ask_final_confirmation:
     - text: "Please confirm: you want to transfer {amount} to {recipient}?"

@@ -24,32 +24,31 @@ conductor_key=os.environ.get("DBOS_CONDUCTOR_KEY", None)
 DBOS(config=config, conductor_key=conductor_key)
 
 @DBOS.step()
-def check_current_balance() -> int:
-    """
-    Check if the user has sufficient funds for the transfer.
-    This is a simple check that would typically involve querying a database or an external service.
-    """
-    balance = 1000
-    return balance
+def transfer_money(amount: int, recipient: str) -> str:
+    ...
+
+@DBOS.step()
+def send_confirmation_message(amount: int, recipient: str, success: str) -> bool:
+    ...
 
 @DBOS.workflow()
-def transfer_money_workflow(amount: int) -> bool:
-    """
-    A simple workflow to simulate a money transfer.
-    """
-    # Check the current funds by invoking the step
-    current_balance = check_current_balance()    
+def transfer_funds_workflow(amount: int, recipient: str) -> bool:
+    # First step, transfer money
+    transfer_success = transfer_money(amount, recipient)
 
-    if amount <= current_balance:
-        return True
-    return False
+    # Wait a bit before sending the confirmation message
+    DBOS.sleep(15)
+
+    # Then, send a confirmation message
+    status = send_confirmation_message(amount, recipient, transfer_success)
+    return status
 
 # Start the DBOS instance
 DBOS.launch()
 
-class ActionCheckSufficientFunds(Action):
+class ActionTransferFunds(Action):
     def name(self) -> Text:
-        return "action_check_sufficient_funds"
+        return "action_transfer_funds"
 
     def run(
         self,
@@ -58,9 +57,16 @@ class ActionCheckSufficientFunds(Action):
         domain: Dict[Text, Any],
     ) -> List[Dict[Text, Any]]:
         transfer_amount = tracker.get_slot("amount")
-        # Invoke a DBOS workflow by simply calling the function
-        has_sufficient_funds = transfer_money_workflow(transfer_amount)
-        return [SlotSet("has_sufficient_funds", has_sufficient_funds)]
+        recipient = tracker.get_slot("recipient")
+        # Invoke a DBOS workflow asynchronously
+        wfid = ''.join(choices(string.ascii_lowercase, k=4))
+
+        with SetWorkflowID(wfid):
+            handle = DBOS.start_workflow(
+                transfer_funds_workflow, transfer_amount, recipient
+            )
+
+        return [SlotSet("transfer_status", f"started ID: {handle.workflow_id}")]
 ```
 
 ## Try This Demo!
@@ -76,7 +82,7 @@ uv pip install dbos
 uv pip install rasa-pro
 # Upgrade websockets to 13.1
 uv pip install websockets==13.1
-# Install sendgrid
+# Install sendgrid (for sending emails)
 uv pip install sendgrid
 
 # Put your Rasa Pro license key here
@@ -115,7 +121,7 @@ Once it's successfully launched, you should be able to see this chat interface:
 ![Rasa inspect](imgs/rasa-intercept.png)
 
 You can see the money transfer workflow. Chat with it to trigger the loading of the custom actions.
-You should see `Registered function for 'action_check_sufficient_funds'` if everything goes well:
+You should see `Registered function for 'action_transfer_funds'` if everything goes well:
 
 ![dbos-terminal](imgs/dbos-terminal.png)
 
@@ -128,3 +134,6 @@ export DBOS_CONDUCTOR_KEY=<Your Key>
 Restart your Rasa server and load the action again. Now you should see the history of all workflows from the DBOS Console:
 
 ![dbos-console](imgs/dbos-console.png)
+
+You can click and check the steps of each workflow:
+![dbos-workflow-graph](imgs/dbos-workflow-graph.png)
