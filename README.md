@@ -2,6 +2,9 @@
 
 This demo shows how to use DBOS in a Rasa Custom Action. Specifically, all you need to do is to install `dbos` and use it in [actions/actions.py](./actions/actions.py)
 
+https://github.com/user-attachments/assets/c02148ab-9cf2-46e8-93d5-165bb5ce842d
+
+
 ```python
 import os
 from typing import Any, Dict, List, Text
